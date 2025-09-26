@@ -38,7 +38,6 @@ export default tseslint.config(
       parserOptions: {
         ecmaVersion: 'latest',
         ecmaFeatures: { jsx: true },
-        project: './tsconfig.json',
         projectService: true,
         sourceType: 'module',
         tsconfigRootDir: import.meta.dirname,
@@ -148,9 +147,6 @@ export default tseslint.config(
         version: 'detect',
       },
       'import/resolver': {
-        node: {
-          extensions: ['.ts', '.tsx', '.js', '.jsx', '.d.ts'],
-        },
         typescript: {
           alwaysTryTypes: true,
           project: './tsconfig.json',
