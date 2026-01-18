@@ -39,6 +39,5 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src"],
-  "exclude": ["cypress"],
+  "include": ["src", "e2e"],
 }
