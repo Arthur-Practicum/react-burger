@@ -1,7 +1,7 @@
 .burger_constructor {
   display: flex;
   flex-direction: column;
-  gap: 40px;
+  gap: 28px;
   width: 600px;
   padding: 0 16px 40px;
   overflow: hidden;
@@ -18,7 +18,15 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  overflow-x: hidden;
+  max-height: calc(100vh - 300px);
+}
+
+.fillings_wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-height: 464px;
+  overflow: hidden auto;
 }
 
 .order_wrapper {
