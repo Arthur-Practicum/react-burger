@@ -1,0 +1,10 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgb(0 0 0 / 60%);
+  animation: fadeIn 0.3s ease;
+}

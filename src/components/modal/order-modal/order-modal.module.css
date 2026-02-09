@@ -1,0 +1,10 @@
+.order_wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 80px;
+}
+
+.text_shadow {
+  text-shadow: 0 0 0.15em rgb(51 51 255 / 50%);
+}

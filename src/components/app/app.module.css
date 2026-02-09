@@ -16,8 +16,25 @@
 .main {
   display: flex;
   justify-content: space-between;
+  gap: 40px;
   width: 1240px;
   height: 100%;
-  margin: 0 auto;
+  margin: 0 auto 20px;
   overflow: hidden;
+}
+
+@media (width <= 768px) {
+  .main {
+    flex-direction: column;
+    overflow: visible;
+  }
+}
+
+.loader_wrapper,
+.error_wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 88px);
+  padding: 40px;
 }
