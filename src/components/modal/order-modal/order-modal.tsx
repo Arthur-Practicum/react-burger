@@ -1,9 +1,15 @@
 import styles from './order-modal.module.css';
 
-export const OrderModal = (): React.JSX.Element => {
+type OrderModalProps = {
+  order: number | null;
+};
+
+export const OrderModal = ({ order }: OrderModalProps): React.JSX.Element => {
   return (
     <div className={styles.order_wrapper}>
-      <span className={`${styles.text_shadow} text text_type_digits-large`}>034536</span>
+      <span className={`${styles.text_shadow} text text_type_digits-large`}>
+        {order ?? 'Пусто'}
+      </span>
 
       <span className="text text_type_main-medium mt-8 mb-15">идентификатор заказа</span>
 

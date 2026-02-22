@@ -1,69 +1,142 @@
 import { Button, CurrencyIcon } from '@krgaa/react-developer-burger-ui-components';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useDrop } from 'react-dnd';
 
 import { BurgerConstructorListItem } from '@components/burger-constructor-list/burger-constructor-list-item.tsx';
+import { EmptyConstructor } from '@components/empty-constructor/empty-constructor.tsx';
 import { Modal } from '@components/modal/modal.tsx';
 import { OrderModal } from '@components/modal/order-modal/order-modal.tsx';
+import { addBun, addIngredient, clearConstructor } from '@services/burger-constructor';
+import { useCreateOrderMutation } from '@services/order';
+import { useAppDispatch, useAppSelector } from '@services/store.ts';
 
-import type { Ingredient } from '@/types/ingredient.ts';
+import type { DNDItem } from '@/types/dnd.ts';
 
 import styles from './burger-constructor.module.css';
 
-type TBurgerConstructorProps = {
-  ingredients: Ingredient[];
-};
+export const BurgerConstructor = (): React.JSX.Element => {
+  const [createOrder, { isLoading, isError, error, data }] = useCreateOrderMutation();
 
-export const BurgerConstructor = ({
-  ingredients,
-}: TBurgerConstructorProps): React.JSX.Element => {
+  const { bun, ingredients } = useAppSelector((state) => state.burgerConstructor);
+
   const [modalOpen, setModalOpen] = useState(false);
+  const [order, setOrder] = useState<null | number>(null);
 
-  const { bun, fillings } = useMemo(() => {
-    const bun = ingredients.find((ingredient) => ingredient.type === 'bun');
-    const fillings = ingredients.filter((ingredient) => ingredient.type !== 'bun');
+  const dispatch = useAppDispatch();
+  const isEmpty = !bun && !ingredients.length;
 
-    return { bun, fillings };
-  }, [ingredients]);
+  const totalPrice = useMemo(() => {
+    let sum = 0;
+    if (bun) sum += bun.price * 2;
+    ingredients.forEach((ingredient) => {
+      sum += ingredient.price;
+    });
+
+    return sum;
+  }, [bun, ingredients]);
+
+  const [{ isOver }, dropTarget] = useDrop({
+    accept: 'ingredient',
+    drop: (item: DNDItem) => {
+      if (item.ingredient) {
+        if (item.ingredient.type === 'bun') {
+          dispatch(addBun(item.ingredient));
+        } else {
+          dispatch(addIngredient(item.ingredient));
+        }
+      }
+    },
+    collect: (monitor) => ({
+      isOver: monitor.isOver(),
+    }),
+  });
+
+  const setRefs = (element: HTMLDivElement | null): void => {
+    dropTarget(element);
+  };
+
+  const handleOnClick = (): void => {
+    if (!bun || ingredients.length === 0) {
+      return;
+    }
+
+    const ingredientIds = [bun._id, ...ingredients.map((ing) => ing._id), bun._id];
+
+    createOrder({
+      ingredients: ingredientIds,
+    }).catch((error) => console.error('Не удалось создать заказ:', error));
+  };
+
+  useEffect(() => {
+    if (error) console.error('Не удалось создать заказ:', error);
+    if (data) {
+      setOrder(data.order.number);
+      setModalOpen(true);
+      dispatch(clearConstructor());
+    }
+  }, [data, error]);
 
   return (
-    <section className={styles.burger_constructor}>
-      <ul className={`${styles.list_wrapper}`}>
-        <li>
-          <BurgerConstructorListItem ingredient={bun} isLocked={true} type="top" />
-        </li>
+    <section
+      ref={setRefs}
+      className={styles.burger_constructor}
+      style={{
+        border: isOver ? '2px solid #4c4cff' : '2px solid transparent',
+      }}
+    >
+      {isEmpty ? (
+        <EmptyConstructor />
+      ) : (
+        <>
+          <ul className={`${styles.list_wrapper}`}>
+            {bun && (
+              <li>
+                <BurgerConstructorListItem ingredient={bun} isLocked type="top" />
+              </li>
+            )}
 
-        <div className={`${styles.fillings_wrapper} custom-scroll`}>
-          {fillings.map((filling) => (
-            <li key={filling._id}>
-              <BurgerConstructorListItem ingredient={filling} isLocked={false} />
-            </li>
-          ))}
-        </div>
+            <div className={`${styles.fillings_wrapper} custom-scroll`}>
+              {ingredients.map((filling, index) => (
+                <li key={filling.uniqueKey}>
+                  <BurgerConstructorListItem ingredient={filling} index={index} />
+                </li>
+              ))}
+            </div>
 
-        <li>
-          <BurgerConstructorListItem ingredient={bun} isLocked={true} type="bottom" />
-        </li>
-      </ul>
+            {bun && (
+              <li>
+                <BurgerConstructorListItem ingredient={bun} isLocked type="bottom" />
+              </li>
+            )}
+          </ul>
 
-      <div className={styles.order_wrapper}>
-        <div className={styles.order_price}>
-          <span className="text text_type_digits-medium">610</span>
+          <div className={styles.order_wrapper}>
+            <div className={styles.order_price}>
+              <span className="text text_type_digits-medium">{totalPrice}</span>
 
-          <CurrencyIcon type="primary" className={styles.icon} />
-        </div>
+              <CurrencyIcon type="primary" className={styles.icon} />
+            </div>
 
-        <Button
-          htmlType="button"
-          type="primary"
-          size={'large'}
-          onClick={() => setModalOpen(true)}
-        >
-          Оформить заказ
-        </Button>
-      </div>
+            <Button
+              htmlType="button"
+              type="primary"
+              size={'large'}
+              onClick={handleOnClick}
+            >
+              {isLoading ? 'Подождите...' : 'Оформить заказ'}
+            </Button>
+
+            {isError && (
+              <p className="text text_type_main-small mt-4" style={{ color: 'red' }}>
+                Ошибка при создании заказа, повторите попытку.
+              </p>
+            )}
+          </div>
+        </>
+      )}
 
       <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}>
-        <OrderModal />
+        <OrderModal order={order} />
       </Modal>
     </section>
   );
