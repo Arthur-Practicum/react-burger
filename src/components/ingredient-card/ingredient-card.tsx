@@ -1,5 +1,8 @@
 import { Counter, CurrencyIcon } from '@krgaa/react-developer-burger-ui-components';
+import { useMemo } from 'react';
 import { useDrag } from 'react-dnd';
+
+import { useAppSelector } from '@services/store.ts';
 
 import type { Ingredient } from '@/types/ingredient.ts';
 
@@ -14,6 +17,8 @@ export const IngredientCard = ({
   ingredient,
   onClick,
 }: IngredientCardprops): React.JSX.Element => {
+  const { bun, ingredients } = useAppSelector((state) => state.burgerConstructor);
+
   const [{ isDragging }, dragTarget] = useDrag(() => ({
     type: 'ingredient',
     item: {
@@ -28,6 +33,14 @@ export const IngredientCard = ({
     dragTarget(element);
   };
 
+  const count = useMemo(() => {
+    if (ingredient.type === 'bun') {
+      return bun?._id === ingredient._id ? 2 : 0;
+    }
+
+    return ingredients.filter((ing) => ing._id === ingredient._id).length;
+  }, [bun, ingredients, ingredient]);
+
   return (
     <div
       ref={setRefs}
@@ -38,7 +51,7 @@ export const IngredientCard = ({
       }}
       onClick={() => onClick(ingredient)}
     >
-      <Counter count={1} size="default" />
+      {count ? <Counter count={count} size="default" /> : null}
 
       <img src={ingredient.image} alt="Картинка ингредиента" />
 

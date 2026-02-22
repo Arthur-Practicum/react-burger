@@ -1,9 +1,9 @@
-import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, nanoid, type PayloadAction } from '@reduxjs/toolkit';
 
 import type { Ingredient, IngredientExtended } from '@/types/ingredient.ts';
 
 type BurgerConstructor = {
-  ingredients: IngredientExtended[]; // Здесь будут уникальные ингредиенты с count
+  ingredients: IngredientExtended[];
   bun: IngredientExtended | null;
 };
 
@@ -16,40 +16,24 @@ const burgerConstructorSlice = createSlice({
   name: 'burgerConstructor',
   initialState,
   reducers: {
-    addIngredient: (state, action: PayloadAction<IngredientExtended>) => {
-      const existingIngredient = state.ingredients.find(
-        (ing) => ing._id === action.payload._id
-      );
-
-      if (existingIngredient) {
-        existingIngredient.count = (existingIngredient.count ?? 1) + 1;
-      } else {
-        state.ingredients.push({
-          ...action.payload,
-          count: 1,
-        });
-      }
+    addIngredient: {
+      prepare: (ingredient: Ingredient) => ({
+        payload: {
+          ...ingredient,
+          uniqueKey: nanoid(),
+        },
+      }),
+      reducer: (state, action: PayloadAction<IngredientExtended>) => {
+        state.ingredients.push(action.payload);
+      },
     },
     removeIngredient: (state, action: PayloadAction<string>) => {
-      const ingredientIndex = state.ingredients.findIndex(
-        (ing) => ing.uniqueKey === action.payload
+      state.ingredients = state.ingredients.filter(
+        (ing) => ing.uniqueKey !== action.payload
       );
-
-      if (ingredientIndex !== -1) {
-        const ingredient = state.ingredients[ingredientIndex];
-
-        if (ingredient.count && ingredient.count > 1) {
-          ingredient.count -= 1;
-        } else {
-          state.ingredients.splice(ingredientIndex, 1);
-        }
-      }
     },
     addBun: (state, action: PayloadAction<Ingredient>) => {
-      state.bun = {
-        ...action.payload,
-        count: 1,
-      };
+      state.bun = action.payload;
     },
     moveIngredient: (
       state,

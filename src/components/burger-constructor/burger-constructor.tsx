@@ -1,5 +1,4 @@
 import { Button, CurrencyIcon } from '@krgaa/react-developer-burger-ui-components';
-import { nanoid } from '@reduxjs/toolkit';
 import { useEffect, useMemo, useState } from 'react';
 import { useDrop } from 'react-dnd';
 
@@ -27,10 +26,13 @@ export const BurgerConstructor = (): React.JSX.Element => {
   const isEmpty = !bun && !ingredients.length;
 
   const totalPrice = useMemo(() => {
-    return (
-      (bun ? bun.price * 2 : 0) +
-      ingredients.reduce((sum, ing) => sum + ing.price * (ing.count ?? 1), 0)
-    );
+    let sum = 0;
+    if (bun) sum += bun.price * 2;
+    ingredients.forEach((ingredient) => {
+      sum += ingredient.price;
+    });
+
+    return sum;
   }, [bun, ingredients]);
 
   const [{ isOver }, dropTarget] = useDrop({
@@ -40,12 +42,7 @@ export const BurgerConstructor = (): React.JSX.Element => {
         if (item.ingredient.type === 'bun') {
           dispatch(addBun(item.ingredient));
         } else {
-          dispatch(
-            addIngredient({
-              ...item.ingredient,
-              uniqueKey: nanoid(),
-            })
-          );
+          dispatch(addIngredient(item.ingredient));
         }
       }
     },
@@ -63,16 +60,7 @@ export const BurgerConstructor = (): React.JSX.Element => {
       return;
     }
 
-    const ingredientIds: string[] = [bun._id];
-
-    ingredients.forEach((ing) => {
-      const count = ing.count ?? 1;
-      for (let i = 0; i < count; i++) {
-        ingredientIds.push(ing._id);
-      }
-    });
-
-    ingredientIds.push(bun._id);
+    const ingredientIds = [bun._id, ...ingredients.map((ing) => ing._id), bun._id];
 
     createOrder({
       ingredients: ingredientIds,
@@ -109,7 +97,7 @@ export const BurgerConstructor = (): React.JSX.Element => {
 
             <div className={`${styles.fillings_wrapper} custom-scroll`}>
               {ingredients.map((filling, index) => (
-                <li key={filling._id}>
+                <li key={filling.uniqueKey}>
                   <BurgerConstructorListItem ingredient={filling} index={index} />
                 </li>
               ))}

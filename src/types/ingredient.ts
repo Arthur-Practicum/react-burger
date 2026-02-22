@@ -15,7 +15,6 @@ export type Ingredient = {
 
 export type IngredientExtended = Ingredient & {
   uniqueKey?: string;
-  count?: number;
 };
 
 export type IngredientsVariants = 'bun' | 'main' | 'sauce';
