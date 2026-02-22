@@ -4,7 +4,9 @@ import { BurgerIngredientsList } from '@components/burger-ingredients-list/burge
 import { IngredientModal } from '@components/modal/ingredient-modal/ingredient-modal.tsx';
 import { Modal } from '@components/modal/modal.tsx';
 import { Tabs } from '@components/tabs/tabs.tsx';
+import { clearIngredient, setIngredient } from '@services/ingredient-modal';
 import { useGetIngredientsQuery } from '@services/ingredients';
+import { useAppDispatch, useAppSelector } from '@services/store.ts';
 import { TABS } from '@utils/constants.ts';
 import { groupByIngredientsType } from '@utils/utils.ts';
 
@@ -15,11 +17,19 @@ import styles from './burger-ingredients.module.css';
 
 export const BurgerIngredients = (): React.JSX.Element => {
   const { data: ingredients = [] } = useGetIngredientsQuery({});
+
+  const selectedIngredient = useAppSelector(
+    (state) => state.ingredientModal.selectedIngredient
+  );
+
   const tabs: TabItem[] = TABS;
+  const dispatch = useAppDispatch();
+
   const [activeTab, setActiveTab] = useState(TABS[0].value);
-  const [selectedIngredient, setSelectedIngredient] = useState<Ingredient | null>(null);
+
   const listGroupRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const containerRef = useRef<HTMLDivElement>(null);
+
   const groupedIngredients = useMemo(
     () => groupByIngredientsType(ingredients),
     [ingredients]
@@ -31,11 +41,11 @@ export const BurgerIngredients = (): React.JSX.Element => {
   };
 
   const handleOnCardClick = (item: Ingredient): void => {
-    setSelectedIngredient(item);
+    dispatch(setIngredient(item));
   };
 
   const handleModalClose = (): void => {
-    setSelectedIngredient(null);
+    dispatch(clearIngredient());
   };
 
   const handleScroll = useCallback(() => {
