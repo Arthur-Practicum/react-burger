@@ -4,6 +4,7 @@ import { BurgerIngredientsList } from '@components/burger-ingredients-list/burge
 import { IngredientModal } from '@components/modal/ingredient-modal/ingredient-modal.tsx';
 import { Modal } from '@components/modal/modal.tsx';
 import { Tabs } from '@components/tabs/tabs.tsx';
+import { useGetIngredientsQuery } from '@services/ingredients';
 import { TABS } from '@utils/constants.ts';
 import { groupByIngredientsType } from '@utils/utils.ts';
 
@@ -12,13 +13,8 @@ import type { TabItem } from '@/types/tabs.ts';
 
 import styles from './burger-ingredients.module.css';
 
-type BurgerIngredientsProps = {
-  ingredients: Ingredient[];
-};
-
-export const BurgerIngredients = ({
-  ingredients,
-}: BurgerIngredientsProps): React.JSX.Element => {
+export const BurgerIngredients = (): React.JSX.Element => {
+  const { data: ingredients = [] } = useGetIngredientsQuery({});
   const tabs: TabItem[] = TABS;
   const [activeTab, setActiveTab] = useState(TABS[0].value);
   const [selectedIngredient, setSelectedIngredient] = useState<Ingredient | null>(null);

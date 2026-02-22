@@ -4,18 +4,13 @@ import { useMemo, useState } from 'react';
 import { BurgerConstructorListItem } from '@components/burger-constructor-list/burger-constructor-list-item.tsx';
 import { Modal } from '@components/modal/modal.tsx';
 import { OrderModal } from '@components/modal/order-modal/order-modal.tsx';
-
-import type { Ingredient } from '@/types/ingredient.ts';
+import { useGetIngredientsQuery } from '@services/ingredients';
 
 import styles from './burger-constructor.module.css';
 
-type TBurgerConstructorProps = {
-  ingredients: Ingredient[];
-};
+export const BurgerConstructor = (): React.JSX.Element => {
+  const { data: ingredients = [] } = useGetIngredientsQuery({});
 
-export const BurgerConstructor = ({
-  ingredients,
-}: TBurgerConstructorProps): React.JSX.Element => {
   const [modalOpen, setModalOpen] = useState(false);
 
   const { bun, fillings } = useMemo(() => {

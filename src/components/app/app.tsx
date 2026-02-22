@@ -1,20 +1,15 @@
-import { useFetch } from '@/hooks/useFetch';
 import { Preloader } from '@krgaa/react-developer-burger-ui-components';
 
 import { AppHeader } from '@components/app-header/app-header';
 import { BurgerConstructor } from '@components/burger-constructor/burger-constructor';
 import { BurgerIngredients } from '@components/burger-ingredients/burger-ingredients';
 import { Error } from '@components/error/error';
-import { API_DOMAIN } from '@utils/constants.ts';
-
-import type { Ingredient } from '@/types/ingredient.ts';
+import { useGetIngredientsQuery } from '@services/ingredients';
 
 import styles from './app.module.css';
 
 export const App = (): React.JSX.Element => {
-  const { data, loading, error, refetch } = useFetch<{ data: Ingredient[] }>(
-    `${API_DOMAIN}/ingredients`
-  );
+  const { isLoading: loading, isError: error, refetch } = useGetIngredientsQuery({});
 
   if (loading) {
     return (
@@ -49,9 +44,9 @@ export const App = (): React.JSX.Element => {
       </h1>
 
       <main className={`${styles.main} pl-5 pr-5`}>
-        <BurgerIngredients ingredients={data?.data ?? []} />
+        <BurgerIngredients />
 
-        <BurgerConstructor ingredients={data?.data ?? []} />
+        <BurgerConstructor />
       </main>
     </div>
   );
