@@ -2,7 +2,7 @@ import {
   ConstructorElement,
   DragIcon,
 } from '@krgaa/react-developer-burger-ui-components';
-import { useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 
 import { moveIngredient, removeIngredient } from '@services/burger-constructor';
@@ -70,16 +70,28 @@ export const BurgerConstructorListItem = ({
     [index]
   );
 
+  const totalPrice = useMemo(() => {
+    return ingredient.count && ingredient.count > 1
+      ? ingredient.price * ingredient.count
+      : ingredient.price;
+  }, [ingredient.count]);
+
   const getIngredientText = (): string => {
+    let text = ingredient.name;
+
+    if (!isLocked && ingredient.count && ingredient.count > 1) {
+      text = `${text} x${ingredient.count}`;
+    }
+
     if (type === 'top') {
-      return `${ingredient.name} (верх)`;
+      return `${text} (верх)`;
     }
 
     if (type === 'bottom') {
-      return `${ingredient.name} (низ)`;
+      return `${text} (низ)`;
     }
 
-    return ingredient.name;
+    return text;
   };
 
   const handleOnClose = (): void => {
@@ -112,7 +124,7 @@ export const BurgerConstructorListItem = ({
         isLocked={isLocked}
         text={getIngredientText()}
         thumbnail={ingredient.image}
-        price={ingredient.price}
+        price={totalPrice}
         type={type}
         handleClose={handleOnClose}
       />

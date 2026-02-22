@@ -1,13 +1,13 @@
 import { Button, CurrencyIcon } from '@krgaa/react-developer-burger-ui-components';
 import { nanoid } from '@reduxjs/toolkit';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useDrop } from 'react-dnd';
 
 import { BurgerConstructorListItem } from '@components/burger-constructor-list/burger-constructor-list-item.tsx';
 import { EmptyConstructor } from '@components/empty-constructor/empty-constructor.tsx';
 import { Modal } from '@components/modal/modal.tsx';
 import { OrderModal } from '@components/modal/order-modal/order-modal.tsx';
-import { addBun, addIngredient } from '@services/burger-constructor';
+import { addBun, addIngredient, clearConstructor } from '@services/burger-constructor';
 import { useCreateOrderMutation } from '@services/order';
 import { useAppDispatch, useAppSelector } from '@services/store.ts';
 
@@ -25,6 +25,13 @@ export const BurgerConstructor = (): React.JSX.Element => {
 
   const dispatch = useAppDispatch();
   const isEmpty = !bun && !ingredients.length;
+
+  const totalPrice = useMemo(() => {
+    return (
+      (bun ? bun.price * 2 : 0) +
+      ingredients.reduce((sum, ing) => sum + ing.price * (ing.count ?? 1), 0)
+    );
+  }, [bun, ingredients]);
 
   const [{ isOver }, dropTarget] = useDrop({
     accept: 'ingredient',
@@ -56,7 +63,16 @@ export const BurgerConstructor = (): React.JSX.Element => {
       return;
     }
 
-    const ingredientIds = [bun._id, ...ingredients.map((ing) => ing._id), bun._id];
+    const ingredientIds: string[] = [bun._id];
+
+    ingredients.forEach((ing) => {
+      const count = ing.count ?? 1;
+      for (let i = 0; i < count; i++) {
+        ingredientIds.push(ing._id);
+      }
+    });
+
+    ingredientIds.push(bun._id);
 
     createOrder({
       ingredients: ingredientIds,
@@ -68,6 +84,7 @@ export const BurgerConstructor = (): React.JSX.Element => {
     if (data) {
       setOrder(data.order.number);
       setModalOpen(true);
+      dispatch(clearConstructor());
     }
   }, [data, error]);
 
@@ -107,7 +124,7 @@ export const BurgerConstructor = (): React.JSX.Element => {
 
           <div className={styles.order_wrapper}>
             <div className={styles.order_price}>
-              <span className="text text_type_digits-medium">610</span>
+              <span className="text text_type_digits-medium">{totalPrice}</span>
 
               <CurrencyIcon type="primary" className={styles.icon} />
             </div>

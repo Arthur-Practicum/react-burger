@@ -1,6 +1,7 @@
 .burger_constructor {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   gap: 28px;
   width: 600px;
   padding: 0 16px 40px;
