@@ -1,6 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { useDispatch, useSelector } from 'react-redux';
 
+import burgerConstructor from '@services/burger-constructor';
 import ingredientModal from '@services/ingredient-modal';
 import { ingredientsApi } from '@services/ingredients';
 import { orderApi } from '@services/order';
@@ -10,6 +11,7 @@ export const store = configureStore({
     [ingredientsApi.reducerPath]: ingredientsApi.reducer,
     [orderApi.reducerPath]: orderApi.reducer,
     ingredientModal: ingredientModal,
+    burgerConstructor: burgerConstructor,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(ingredientsApi.middleware).concat(orderApi.middleware),

@@ -13,6 +13,10 @@ export type Ingredient = {
   __v: number;
 };
 
+export type IngredientExtended = Ingredient & {
+  uniqueKey?: string;
+};
+
 export type IngredientsVariants = 'bun' | 'main' | 'sauce';
 
 export type GroupedIngredients = {

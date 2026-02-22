@@ -10,7 +10,7 @@ const initialState: IngredientModal = {
   selectedIngredient: null,
 };
 
-const ingredientModal = createSlice({
+const ingredientModalSlice = createSlice({
   name: 'ingredientModal',
   initialState,
   reducers: {
@@ -23,5 +23,5 @@ const ingredientModal = createSlice({
   },
 });
 
-export const { setIngredient, clearIngredient } = ingredientModal.actions;
-export default ingredientModal.reducer;
+export const { setIngredient, clearIngredient } = ingredientModalSlice.actions;
+export default ingredientModalSlice.reducer;
