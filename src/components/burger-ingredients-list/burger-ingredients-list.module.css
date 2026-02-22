@@ -1,0 +1,6 @@
+.cards_list {
+  display: grid;
+  grid-template-columns: 2fr 2fr;
+  gap: 24px;
+  padding: 24px 16px 40px;
+}

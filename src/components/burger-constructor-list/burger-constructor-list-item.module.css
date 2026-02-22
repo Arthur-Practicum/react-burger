@@ -1,0 +1,15 @@
+.item_wrapper {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-right: 8px;
+}
+
+.icon_container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 24px;
+  height: 24px;
+  cursor: grab;
+}

@@ -1,0 +1,20 @@
+.modal {
+  position: relative;
+  width: 100%;
+  max-width: 720px;
+  padding: 40px;
+  overflow: auto;
+  background: var(--background);
+  border-radius: 40px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.icon {
+  margin-left: auto;
+  cursor: pointer;
+}
