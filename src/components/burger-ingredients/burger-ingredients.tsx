@@ -23,6 +23,7 @@ export const BurgerIngredients = ({
   const [activeTab, setActiveTab] = useState(TABS[0].value);
   const [selectedIngredient, setSelectedIngredient] = useState<Ingredient | null>(null);
   const listGroupRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const containerRef = useRef<HTMLDivElement>(null);
   const groupedIngredients = useMemo(
     () => groupByIngredientsType(ingredients),
     [ingredients]
@@ -41,6 +42,28 @@ export const BurgerIngredients = ({
     setSelectedIngredient(null);
   };
 
+  const handleScroll = useCallback(() => {
+    if (!containerRef.current) return;
+
+    const containerRect = containerRef.current.getBoundingClientRect();
+    let closestType = TABS[0].value;
+    let minDistance = Infinity;
+
+    Object.keys(listGroupRefs.current).forEach((type) => {
+      const section = listGroupRefs.current[type];
+      if (section) {
+        const rect = section.getBoundingClientRect();
+        const distance = Math.abs(rect.top - containerRect.top);
+        if (distance < minDistance) {
+          minDistance = distance;
+          closestType = type;
+        }
+      }
+    });
+
+    setActiveTab(closestType);
+  }, []);
+
   const setListGroupRef = useCallback(
     (type: string): ((el: HTMLDivElement | null) => void) => {
       return (el: HTMLDivElement | null) => {
@@ -54,7 +77,11 @@ export const BurgerIngredients = ({
     <section className={styles.burger_ingredients}>
       <Tabs tabs={tabs} onChange={handleTabChange} activeTab={activeTab} />
 
-      <div className={`${styles.ingredients_list} custom-scroll`}>
+      <div
+        ref={containerRef}
+        onScroll={handleScroll}
+        className={`${styles.ingredients_list} custom-scroll`}
+      >
         {groupedIngredients.map((group, index) => (
           <BurgerIngredientsList
             key={index}
