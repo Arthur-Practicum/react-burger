@@ -1,8 +1,7 @@
 import { Preloader } from '@krgaa/react-developer-burger-ui-components';
+import { Outlet } from 'react-router-dom';
 
 import { AppHeader } from '@components/app-header/app-header';
-import { BurgerConstructor } from '@components/burger-constructor/burger-constructor';
-import { BurgerIngredients } from '@components/burger-ingredients/burger-ingredients';
 import { Error } from '@components/error/error';
 import { useGetIngredientsQuery } from '@services/ingredients';
 
@@ -39,15 +38,7 @@ export const App = (): React.JSX.Element => {
     <div className={styles.app}>
       <AppHeader />
 
-      <h1 className={`${styles.title} text text_type_main-large mt-10 mb-5 pl-5`}>
-        Соберите бургер
-      </h1>
-
-      <main className={`${styles.main} pl-5 pr-5`}>
-        <BurgerIngredients />
-
-        <BurgerConstructor />
-      </main>
+      <Outlet />
     </div>
   );
 };
