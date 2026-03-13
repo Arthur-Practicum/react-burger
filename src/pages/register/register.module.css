@@ -1,0 +1,36 @@
+.register-page {
+  width: 100%;
+  max-width: 480px;
+  margin: 180px auto;
+}
+
+.register-page__title {
+  text-align: center;
+}
+
+.register-page__form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  margin: 24px 0 80px;
+}
+
+.register-page__footer {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.register-page__link {
+  color: #4c4cff;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  text-decoration: none;
+  transition: opacity 0.3s;
+}
+
+.register-page__link:hover {
+  opacity: 0.8;
+}
