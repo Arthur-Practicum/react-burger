@@ -1,16 +1,25 @@
 import { Preloader } from '@krgaa/react-developer-burger-ui-components';
+import { useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 
 import { AppHeader } from '@components/app-header/app-header';
 import { Error } from '@components/error/error';
+import { checkAuth } from '@services/auth-slice/authSlice.ts';
 import { useGetIngredientsQuery } from '@services/ingredients';
+import { useAppDispatch, useAppSelector } from '@services/store.ts';
 
 import styles from './app.module.css';
 
 export const App = (): React.JSX.Element => {
   const { isLoading: loading, isError: error, refetch } = useGetIngredientsQuery({});
+  const dispatch = useAppDispatch();
+  const { isInitialized } = useAppSelector((state) => state.auth);
 
-  if (loading) {
+  useEffect(() => {
+    void dispatch(checkAuth());
+  }, [dispatch]);
+
+  if (loading || !isInitialized) {
     return (
       <div className={styles.app}>
         <AppHeader />

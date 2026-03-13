@@ -1,20 +1,33 @@
 import { ROUTES } from '@/router';
 import { Button, EmailInput } from '@krgaa/react-developer-burger-ui-components';
 import { type FormEvent, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+
+import { useForgotPasswordMutation } from '@services/auth-api';
 
 import type { ForgotPasswordRequest } from '@/types/auth.ts';
 
 import styles from './forgot-password.module.css';
 
 export const ForgotPasswordPage = (): React.JSX.Element => {
+  const [forgotPassword, { isLoading }] = useForgotPasswordMutation();
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState<ForgotPasswordRequest>({
     email: '',
   });
 
   function handleSubmit(e: FormEvent<HTMLFormElement>): void {
     e.preventDefault();
-    console.log('RegisterPage');
+    forgotPassword(formData)
+      .then((res) => {
+        if (res.data) {
+          localStorage.setItem('passwordResetStep', 'true');
+          setFormData({ email: '' });
+          void navigate(ROUTES.ResetPassword);
+        }
+      })
+      .catch((err) => console.error('Ошибка востановления пароля:', err));
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -41,7 +54,7 @@ export const ForgotPasswordPage = (): React.JSX.Element => {
           placeholder="Укажите e-mail"
         />
 
-        <Button htmlType="submit" type="primary" size="medium">
+        <Button htmlType="submit" type="primary" size="medium" disabled={isLoading}>
           Восстановить
         </Button>
       </form>

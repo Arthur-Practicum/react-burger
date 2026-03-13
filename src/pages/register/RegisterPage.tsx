@@ -5,14 +5,24 @@ import {
   Input,
   PasswordInput,
 } from '@krgaa/react-developer-burger-ui-components';
-import { type FormEvent, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { type FormEvent, useEffect, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useRegisterMutation } from 'src/services/auth-api';
+
+import { setAuthTokens } from '@services/auth-slice/authSlice.ts';
+import { useAppDispatch, useAppSelector } from '@services/store.ts';
 
 import type { RegisterRequest } from '@/types/auth.ts';
 
 import styles from './register.module.css';
 
 export const RegisterPage = (): React.JSX.Element => {
+  const [register, { isLoading }] = useRegisterMutation();
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
+
   const [formData, setFormData] = useState<RegisterRequest>({
     email: '',
     password: '',
@@ -21,8 +31,30 @@ export const RegisterPage = (): React.JSX.Element => {
 
   function handleSubmit(e: FormEvent<HTMLFormElement>): void {
     e.preventDefault();
-    console.log('RegisterPage');
+    register(formData)
+      .then((res) => {
+        if (res.data) {
+          dispatch(
+            setAuthTokens({
+              user: res.data.user,
+              accessToken: res.data.accessToken,
+              refreshToken: res.data.refreshToken,
+            })
+          );
+
+          clearInputs();
+        }
+      })
+      .catch((error) => console.error('Ошибка регистрации:', error));
   }
+
+  const clearInputs = (): void => {
+    setFormData({
+      email: '',
+      password: '',
+      name: '',
+    });
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target;
@@ -33,6 +65,14 @@ export const RegisterPage = (): React.JSX.Element => {
       })
     );
   };
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      const state = location.state as { from?: { pathname: string } };
+      const fromLocation = state?.from?.pathname ?? ROUTES.Home;
+      void navigate(fromLocation, { replace: true });
+    }
+  }, [isAuthenticated, navigate, location.state]);
 
   return (
     <section className={styles['register-page']}>
@@ -56,7 +96,7 @@ export const RegisterPage = (): React.JSX.Element => {
           onChange={handleInputChange}
         />
 
-        <Button htmlType="submit" type="primary" size="medium">
+        <Button htmlType="submit" type="primary" size="medium" disabled={isLoading}>
           Зарегистрироваться
         </Button>
       </form>

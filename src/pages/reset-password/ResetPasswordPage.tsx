@@ -4,14 +4,20 @@ import {
   Input,
   PasswordInput,
 } from '@krgaa/react-developer-burger-ui-components';
-import { type FormEvent, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { type FormEvent, useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+
+import { useResetPasswordMutation } from '@services/auth-api';
 
 import type { ResetPasswordRequest } from '@/types/auth.ts';
 
 import styles from './reset-password.module.css';
 
 export const ResetPasswordPage = (): React.JSX.Element => {
+  const [resetPassword, { isLoading }] = useResetPasswordMutation();
+
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState<ResetPasswordRequest>({
     password: '',
     token: '',
@@ -19,7 +25,15 @@ export const ResetPasswordPage = (): React.JSX.Element => {
 
   function handleSubmit(e: FormEvent<HTMLFormElement>): void {
     e.preventDefault();
-    console.log('RegisterPage');
+    resetPassword(formData)
+      .then((result) => {
+        if (result.data) {
+          localStorage.removeItem('passwordResetStep');
+          setFormData({ password: '', token: '' });
+          void navigate(ROUTES.Login);
+        }
+      })
+      .catch((err) => console.error('Ошибка сброса пароля:', err));
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -31,6 +45,13 @@ export const ResetPasswordPage = (): React.JSX.Element => {
       })
     );
   };
+
+  useEffect(() => {
+    const passwordResetStep = localStorage.getItem('passwordResetStep');
+    if (!passwordResetStep) {
+      void navigate(ROUTES.ForgotPassword);
+    }
+  }, [navigate]);
 
   return (
     <section className={styles['reset-page']}>
@@ -54,7 +75,7 @@ export const ResetPasswordPage = (): React.JSX.Element => {
           required
         />
 
-        <Button htmlType="submit" type="primary" size="medium">
+        <Button htmlType="submit" type="primary" size="medium" disabled={isLoading}>
           Сохранить
         </Button>
       </form>

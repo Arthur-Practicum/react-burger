@@ -2,6 +2,7 @@ import { createBrowserRouter } from 'react-router-dom';
 
 import App from '@components/app/app.tsx';
 import { IngredientModal } from '@components/modal/ingredient-modal/ingredient-modal.tsx';
+import { ProtectedRoute } from '@components/protected-route/protected-route.tsx';
 import { FeedPage } from '@pages/feed/FeedPage.tsx';
 import { ForgotPasswordPage } from '@pages/forgot-password/ForgotPasswordPage.tsx';
 import { Home } from '@pages/home/HomaPage.tsx';
@@ -41,23 +42,43 @@ export const router = createBrowserRouter([
       },
       {
         path: ROUTES.Register,
-        element: <RegisterPage />,
+        element: (
+          <ProtectedRoute onlyUnAuth={false} redirectTo={ROUTES.Home}>
+            <RegisterPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: ROUTES.Login,
-        element: <LoginPage />,
+        element: (
+          <ProtectedRoute onlyUnAuth={false} redirectTo={ROUTES.Home}>
+            <LoginPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: ROUTES.ForgotPassword,
-        element: <ForgotPasswordPage />,
+        element: (
+          <ProtectedRoute onlyUnAuth={false} redirectTo={ROUTES.Home}>
+            <ForgotPasswordPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: ROUTES.ResetPassword,
-        element: <ResetPasswordPage />,
+        element: (
+          <ProtectedRoute onlyUnAuth={false} redirectTo={ROUTES.Home}>
+            <ResetPasswordPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: ROUTES.Profile,
-        element: <ProfilePage />,
+        element: (
+          <ProtectedRoute onlyUnAuth redirectTo={ROUTES.Login}>
+            <ProfilePage />
+          </ProtectedRoute>
+        ),
         children: [
           {
             index: true,
