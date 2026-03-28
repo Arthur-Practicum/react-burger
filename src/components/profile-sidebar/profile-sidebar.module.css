@@ -1,0 +1,45 @@
+.profile-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 80px;
+  width: 320px;
+}
+
+.profile-sidebar__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.profile-sidebar__item {
+  padding: 16px 0;
+}
+
+.profile-sidebar__link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.profile-sidebar__link:hover {
+  opacity: 0.8;
+}
+
+.profile-sidebar__link_active {
+  color: #fff;
+}
+
+.profile-sidebar__item_logout {
+  padding: 16px 0;
+  cursor: pointer;
+}
+
+.profile-sidebar__item_logout:hover {
+  opacity: 0.8;
+}
+
+.profile-sidebar__footer-text {
+  opacity: 0.4;
+}

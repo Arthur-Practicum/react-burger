@@ -1,0 +1,11 @@
+.profile-detail-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.profile-detail-page__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 20px;
+}

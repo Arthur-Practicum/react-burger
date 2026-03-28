@@ -1,12 +1,10 @@
+import { ROUTES } from '@/router';
 import { useCallback, useMemo, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { BurgerIngredientsList } from '@components/burger-ingredients-list/burger-ingredients-list.tsx';
-import { IngredientModal } from '@components/modal/ingredient-modal/ingredient-modal.tsx';
-import { Modal } from '@components/modal/modal.tsx';
 import { Tabs } from '@components/tabs/tabs.tsx';
-import { clearIngredient, setIngredient } from '@services/ingredient-modal';
 import { useGetIngredientsQuery } from '@services/ingredients';
-import { useAppDispatch, useAppSelector } from '@services/store.ts';
 import { TABS } from '@utils/constants.ts';
 import { groupByIngredientsType } from '@utils/utils.ts';
 
@@ -18,12 +16,8 @@ import styles from './burger-ingredients.module.css';
 export const BurgerIngredients = (): React.JSX.Element => {
   const { data: ingredients = [] } = useGetIngredientsQuery({});
 
-  const selectedIngredient = useAppSelector(
-    (state) => state.ingredientModal.selectedIngredient
-  );
-
   const tabs: TabItem[] = TABS;
-  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState(TABS[0].value);
 
@@ -41,11 +35,7 @@ export const BurgerIngredients = (): React.JSX.Element => {
   };
 
   const handleOnCardClick = (item: Ingredient): void => {
-    dispatch(setIngredient(item));
-  };
-
-  const handleModalClose = (): void => {
-    dispatch(clearIngredient());
+    void navigate(`${ROUTES.Ingredients}/${item._id}`);
   };
 
   const handleScroll = useCallback(() => {
@@ -98,16 +88,6 @@ export const BurgerIngredients = (): React.JSX.Element => {
           />
         ))}
       </div>
-
-      {selectedIngredient && (
-        <Modal
-          title={'Детали ингредиента'}
-          isOpen={!!selectedIngredient}
-          onClose={handleModalClose}
-        >
-          <IngredientModal ingredient={selectedIngredient} />
-        </Modal>
-      )}
     </section>
   );
 };

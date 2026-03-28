@@ -1,38 +1,38 @@
-import type { Ingredient } from '@/types/ingredient.ts';
+import { useParams } from 'react-router-dom';
+
+import { useGetIngredientsQuery } from '@services/ingredients';
 
 import styles from './ingredient-modal.module.css';
 
-type IngredientModalProps = {
-  ingredient: Ingredient;
-};
+export const IngredientModal = (): React.JSX.Element => {
+  const { id } = useParams();
+  const { data: ingredients = [] } = useGetIngredientsQuery({});
 
-export const IngredientModal = ({
-  ingredient,
-}: IngredientModalProps): React.JSX.Element => {
+  const ingredient = ingredients.find((ing) => ing._id === id);
   const details = [
     {
       title: 'Калории,ккал',
-      value: ingredient.calories,
+      value: ingredient?.calories,
     },
     {
       title: 'Белки, г',
-      value: ingredient.proteins,
+      value: ingredient?.proteins,
     },
     {
       title: 'Жиры, г',
-      value: ingredient.fat,
+      value: ingredient?.fat,
     },
     {
       title: 'Углеводы, г',
-      value: ingredient.carbohydrates,
+      value: ingredient?.carbohydrates,
     },
   ];
 
   return (
     <div className={styles.ingredient_wrapper}>
-      <img src={ingredient.image_large} alt={ingredient.name} />
+      <img src={ingredient?.image_large} alt={ingredient?.name} />
 
-      <h3 className="text text_type_main-medium">{ingredient.name}</h3>
+      <h3 className="text text_type_main-medium">{ingredient?.name}</h3>
 
       <div className={styles.details_wrapper}>
         {details.map((detail, index) => (
