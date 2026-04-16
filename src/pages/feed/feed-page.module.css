@@ -1,0 +1,17 @@
+.title {
+  width: 100%;
+  max-width: 1280px;
+  margin: 40px auto 20px;
+}
+
+.container {
+  display: flex;
+  flex: 1;
+  justify-content: space-between;
+  gap: 60px;
+  width: 1280px;
+  height: 100%;
+  margin: 0 auto;
+  padding-bottom: 20px;
+  overflow: hidden;
+}

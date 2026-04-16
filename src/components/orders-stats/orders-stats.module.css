@@ -1,0 +1,39 @@
+.orders_stats {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 60px;
+}
+
+.statuses {
+  display: flex;
+  align-items: flex-start;
+  gap: 36px;
+}
+
+.status_column {
+  position: relative;
+  flex: 1;
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.status_column p {
+  position: fixed;
+  width: 100%;
+  background-color: #131316;
+}
+
+.ready_orders_list {
+  color: #0cc;
+}
+
+.ready_orders_list,
+.inprogress_orders_list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 30px;
+  padding: initial;
+  list-style: none;
+}
