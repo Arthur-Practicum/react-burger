@@ -256,7 +256,7 @@ const emptyWsMessage: WSMessage = { orders: [], total: 0, totalToday: 0 };
 export const orderApi = createApi({
   reducerPath: 'orderApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: `${API_DOMAIN}/api/`,
+    baseUrl: `${API_DOMAIN}/`,
     prepareHeaders: (headers, { getState }): Headers => {
       headers.set('Content-Type', 'application/json');
 

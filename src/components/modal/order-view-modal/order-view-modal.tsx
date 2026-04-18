@@ -143,7 +143,9 @@ export const OrderViewModal = (): React.JSX.Element | null => {
                 <span className="text text_type_main-default">
                   {item.count} x
                   <div className={styles.order_price}>
-                    <span className="text text_type_digits-medium">{price}</span>
+                    <span className="text text_type_digits-medium">
+                      {item.ingredient.price}
+                    </span>
 
                     <CurrencyIcon type="primary" className={styles.icon} />
                   </div>

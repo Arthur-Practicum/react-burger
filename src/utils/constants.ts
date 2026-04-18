@@ -10,5 +10,5 @@ export const STATUSES = {
   done: 'Выполнен',
 };
 
-export const API_DOMAIN = ' https://new-stellarburgers.education-services.ru/api';
+export const API_DOMAIN = 'https://new-stellarburgers.education-services.ru/api';
 export const WS_HOST = 'wss://new-stellarburgers.education-services.ru';

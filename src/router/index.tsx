@@ -88,10 +88,12 @@ export const router = createBrowserRouter([
           {
             path: `${ROUTES.Profile}/orders`,
             element: <ProfileOrderPage />,
-          },
-          {
-            path: `${ROUTES.Profile}/orders/:id`,
-            element: <OrderViewModal />,
+            children: [
+              {
+                path: `:id`,
+                element: <OrderViewModal />,
+              },
+            ],
           },
         ],
       },
