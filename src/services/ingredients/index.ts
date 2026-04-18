@@ -15,4 +15,13 @@ export const ingredientsApi = createApi({
   }),
 });
 
+export const useGetIngredientsMap = (): Record<string, Ingredient> => {
+  const { data: ingredients = [] } = useGetIngredientsQuery({});
+
+  return ingredients.reduce<Record<string, Ingredient>>((map, ingredient) => {
+    map[ingredient._id] = ingredient;
+    return map;
+  }, {});
+};
+
 export const { useGetIngredientsQuery } = ingredientsApi;

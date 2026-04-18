@@ -1,0 +1,39 @@
+.order_item {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px;
+  background-color: #1c1c21;
+  border-radius: 40px;
+
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.order_item_header,
+.order_item_footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+}
+
+.status_done {
+  color: #0cc;
+}
+
+.status_pending {
+  color: #fff;
+}
+
+.order_price {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.icon {
+  width: 36px;
+  height: 36px;
+}

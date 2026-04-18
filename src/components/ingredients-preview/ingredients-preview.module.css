@@ -1,0 +1,11 @@
+.stack {
+  display: flex;
+}
+
+.item {
+  position: relative;
+}
+
+.item:not(:first-child) {
+  margin-left: -16px;
+}

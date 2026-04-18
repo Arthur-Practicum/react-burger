@@ -1,6 +1,8 @@
+import { ROUTES } from '@/router';
 import { Button, CurrencyIcon } from '@krgaa/react-developer-burger-ui-components';
 import { useEffect, useMemo, useState } from 'react';
 import { useDrop } from 'react-dnd';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { BurgerConstructorListItem } from '@components/burger-constructor-list/burger-constructor-list-item.tsx';
 import { EmptyConstructor } from '@components/empty-constructor/empty-constructor.tsx';
@@ -18,11 +20,14 @@ export const BurgerConstructor = (): React.JSX.Element => {
   const [createOrder, { isLoading, isError, error, data }] = useCreateOrderMutation();
 
   const { bun, ingredients } = useAppSelector((state) => state.burgerConstructor);
+  const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [order, setOrder] = useState<null | number>(null);
 
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
   const isEmpty = !bun && !ingredients.length;
 
   const totalPrice = useMemo(() => {
@@ -57,6 +62,11 @@ export const BurgerConstructor = (): React.JSX.Element => {
 
   const handleOnClick = (): void => {
     if (!bun || ingredients.length === 0) {
+      return;
+    }
+
+    if (!isAuthenticated) {
+      void navigate(ROUTES.Login, { state: { from: location } });
       return;
     }
 

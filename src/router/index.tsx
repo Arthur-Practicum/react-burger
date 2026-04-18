@@ -2,6 +2,7 @@ import { createBrowserRouter } from 'react-router-dom';
 
 import App from '@components/app/app.tsx';
 import { IngredientModal } from '@components/modal/ingredient-modal/ingredient-modal.tsx';
+import { OrderViewModal } from '@components/modal/order-view-modal/order-view-modal.tsx';
 import { ProtectedRoute } from '@components/protected-route/protected-route.tsx';
 import { FeedPage } from '@pages/feed/FeedPage.tsx';
 import { ForgotPasswordPage } from '@pages/forgot-password/ForgotPasswordPage.tsx';
@@ -87,10 +88,25 @@ export const router = createBrowserRouter([
           {
             path: `${ROUTES.Profile}/orders`,
             element: <ProfileOrderPage />,
+            children: [
+              {
+                path: `:id`,
+                element: <OrderViewModal />,
+              },
+            ],
           },
         ],
       },
-      { path: ROUTES.Feed, element: <FeedPage /> },
+      {
+        path: ROUTES.Feed,
+        element: <FeedPage />,
+        children: [
+          {
+            path: `:id`,
+            element: <OrderViewModal />,
+          },
+        ],
+      },
       { path: '*', element: <NotFoundPage /> },
     ],
   },
