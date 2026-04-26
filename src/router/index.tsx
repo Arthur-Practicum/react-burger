@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router-dom';
+import { createHashRouter } from 'react-router-dom';
 
 import App from '@components/app/app.tsx';
 import { IngredientModal } from '@components/modal/ingredient-modal/ingredient-modal.tsx';
@@ -26,7 +26,7 @@ export const ROUTES = {
   Feed: '/feed',
 };
 
-export const router = createBrowserRouter([
+export const router = createHashRouter([
   {
     path: ROUTES.Home,
     element: <App />,

@@ -25,5 +25,7 @@ storybook-static
 *.sln
 *.sw?
 
-playwright-report
-test-results
+playwright-report/
+test-results/
+blob-report/
+/playwright/.cache/
