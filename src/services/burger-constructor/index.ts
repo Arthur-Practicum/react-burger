@@ -7,7 +7,7 @@ type BurgerConstructor = {
   bun: IngredientExtended | null;
 };
 
-const initialState: BurgerConstructor = {
+export const initialState: BurgerConstructor = {
   ingredients: [],
   bun: null,
 };

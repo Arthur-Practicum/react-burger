@@ -6,18 +6,10 @@ import reducer, {
   logout,
   restoreAuth,
   checkAuth,
+  initialState,
 } from './authSlice';
 
 const mockUser = { email: 'test@example.com', name: 'Test User' };
-
-const initialState = {
-  user: null,
-  accessToken: null,
-  refreshToken: null,
-  isAuthenticated: false,
-  isInitialized: false,
-  isLoading: false,
-};
 
 const authenticatedState = {
   user: mockUser,

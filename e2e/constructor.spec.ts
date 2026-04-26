@@ -1,108 +1,27 @@
 import { expect, test, type Locator, type Page } from '@playwright/test';
 
-const API_URL = 'https://new-stellarburgers.education-services.ru/api';
-
 const mockBun = {
   _id: '643d69a5c3f7b9001cfa093c',
   name: 'Краторная булка N-200i',
-  type: 'bun',
-  proteins: 80,
-  fat: 24,
-  carbohydrates: 53,
   calories: 420,
+  proteins: 80,
   price: 1255,
-  image:
-    'https://code.s3.yandex.net/react-developer-burger-ui-components/code/bun-02.png',
-  image_mobile:
-    'https://code.s3.yandex.net/react-developer-burger-ui-components/code/bun-02-mobile.png',
-  image_large:
-    'https://code.s3.yandex.net/react-developer-burger-ui-components/code/bun-02-large.png',
-  __v: 0,
 };
 
 const mockMain = {
   _id: '643d69a5c3f7b9001cfa0941',
   name: 'Биокотлета из марсианской Магнолии',
-  type: 'main',
-  proteins: 420,
-  fat: 142,
-  carbohydrates: 242,
-  calories: 4242,
   price: 424,
-  image:
-    'https://code.s3.yandex.net/react-developer-burger-ui-components/code/cutlet.png',
-  image_mobile:
-    'https://code.s3.yandex.net/react-developer-burger-ui-components/code/cutlet-mobile.png',
-  image_large:
-    'https://code.s3.yandex.net/react-developer-burger-ui-components/code/cutlet-large.png',
-  __v: 0,
 };
 
 const mockSauce = {
-  _id: '643d69a5c3f7b9001cfa093e',
   name: 'Соус Spicy-X',
-  type: 'sauce',
-  proteins: 30,
-  fat: 20,
-  carbohydrates: 40,
-  calories: 30,
-  price: 90,
-  image:
-    'https://code.s3.yandex.net/react-developer-burger-ui-components/code/sauce-02.png',
-  image_mobile:
-    'https://code.s3.yandex.net/react-developer-burger-ui-components/code/sauce-02-mobile.png',
-  image_large:
-    'https://code.s3.yandex.net/react-developer-burger-ui-components/code/sauce-02-large.png',
-  __v: 0,
 };
-
-const mockIngredients = [mockBun, mockMain, mockSauce];
 
 const mockUser = { email: 'test@test.com', name: 'Тестовый пользователь' };
 const mockAccessToken = 'Bearer mock-access-token-12345';
 const mockRefreshToken = 'mock-refresh-token-12345';
 const mockOrderNumber = 99999;
-
-async function setupIngredientsMock(page: Page): Promise<void> {
-  await page.route(`${API_URL}/ingredients`, async (route) => {
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify({ success: true, data: mockIngredients }),
-    });
-  });
-}
-
-async function setupAuthUserMock(page: Page): Promise<void> {
-  await page.route(`${API_URL}/auth/user`, async (route) => {
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify({ success: true, user: mockUser }),
-    });
-  });
-}
-
-async function setupOrderMock(
-  page: Page,
-  orderNumber: number = mockOrderNumber
-): Promise<void> {
-  await page.route(`${API_URL}/orders`, async (route) => {
-    if (route.request().method() === 'POST') {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          success: true,
-          name: 'Флюоресцентный антигравитационный бургер',
-          order: { number: orderNumber },
-        }),
-      });
-    } else {
-      await route.continue();
-    }
-  });
-}
 
 async function setAuthTokensInStorage(page: Page): Promise<void> {
   await page.evaluate(
@@ -132,7 +51,10 @@ async function dragToConstructor(page: Page, card: Locator): Promise<void> {
 
 test.describe('Страница «Конструктор»', () => {
   test.beforeEach(async ({ page }) => {
-    await setupIngredientsMock(page);
+    await page.routeFromHAR('e2e/hars/api.har', {
+      url: /new-stellarburgers\.education-services\.ru\/api/,
+      notFound: 'abort',
+    });
     await page.goto('/');
     await page.waitForSelector(`text=${mockBun.name}`);
   });
@@ -171,7 +93,7 @@ test.describe('Страница «Конструктор»', () => {
       await page.locator('#modals svg').click();
 
       await expect(page.locator('#modals')).toBeEmpty();
-      await expect(page).toHaveURL('/');
+      await expect(page).toHaveURL(/#\/$/);
     });
 
     test('закрывается кликом по оверлею', async ({ page }) => {
@@ -182,7 +104,7 @@ test.describe('Страница «Конструктор»', () => {
       await overlay.click({ position: { x: 5, y: 5 } });
 
       await expect(page.locator('#modals')).toBeEmpty();
-      await expect(page).toHaveURL('/');
+      await expect(page).toHaveURL(/#\/$/);
     });
 
     test('закрывается клавишей Escape', async ({ page }) => {
@@ -192,7 +114,7 @@ test.describe('Страница «Конструктор»', () => {
       await page.keyboard.press('Escape');
 
       await expect(page.locator('#modals')).toBeEmpty();
-      await expect(page).toHaveURL('/');
+      await expect(page).toHaveURL(/#\/$/);
     });
   });
 
@@ -246,14 +168,11 @@ test.describe('Страница «Конструктор»', () => {
 
       await page.getByRole('button', { name: 'Оформить заказ' }).click();
 
-      await expect(page).toHaveURL('/login');
+      await expect(page).toHaveURL(/#\/login/);
     });
 
     test('создаёт заказ и открывает модальное окно с номером', async ({ page }) => {
-      await setupAuthUserMock(page);
-      await setupOrderMock(page);
       await setAuthTokensInStorage(page);
-
       await page.reload();
       await page.waitForSelector(`text=${mockBun.name}`);
 
@@ -269,8 +188,6 @@ test.describe('Страница «Конструктор»', () => {
     });
 
     test('очищает конструктор после успешного оформления заказа', async ({ page }) => {
-      await setupAuthUserMock(page);
-      await setupOrderMock(page);
       await setAuthTokensInStorage(page);
       await page.reload();
       await page.waitForSelector(`text=${mockBun.name}`);
@@ -289,8 +206,6 @@ test.describe('Страница «Конструктор»', () => {
     });
 
     test('модальное окно заказа закрывается кнопкой «Закрыть»', async ({ page }) => {
-      await setupAuthUserMock(page);
-      await setupOrderMock(page);
       await setAuthTokensInStorage(page);
       await page.reload();
       await page.waitForSelector(`text=${mockBun.name}`);
@@ -307,8 +222,6 @@ test.describe('Страница «Конструктор»', () => {
     });
 
     test('модальное окно заказа закрывается кликом по оверлею', async ({ page }) => {
-      await setupAuthUserMock(page);
-      await setupOrderMock(page);
       await setAuthTokensInStorage(page);
       await page.reload();
       await page.waitForSelector(`text=${mockBun.name}`);
@@ -328,8 +241,6 @@ test.describe('Страница «Конструктор»', () => {
     test('полный путь пользователя: сборка бургера → заказ → подтверждение', async ({
       page,
     }) => {
-      await setupAuthUserMock(page);
-      await setupOrderMock(page);
       await setAuthTokensInStorage(page);
       await page.reload();
       await page.waitForSelector(`text=${mockBun.name}`);

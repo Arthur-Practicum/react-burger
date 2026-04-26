@@ -6,6 +6,7 @@ import reducer, {
   addBun,
   moveIngredient,
   clearConstructor,
+  initialState,
 } from './index';
 
 import type { Ingredient } from '@/types/ingredient';
@@ -54,11 +55,6 @@ const makeBun = (id = '3'): Ingredient => ({
   image_mobile: 'bun_mobile.png',
   __v: 0,
 });
-
-const initialState = {
-  ingredients: [],
-  bun: null,
-};
 
 describe('burgerConstructorSlice', () => {
   it('returns the initial state', () => {
